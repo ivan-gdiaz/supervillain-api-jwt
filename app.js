@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 
 const villainsRouter = require('./routes/villains');
 const usersRouter = require('./routes/users');
-const authRouter = require('./routes/auth');
 
 const app = express();
 
@@ -13,7 +12,7 @@ const app = express();
 if (process.env.RENDER === 'true') app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
-if (process.env.NODE_ENV !== 'test') app.use(logger('dev', { skip: (req) => req.path.startsWith('/api/auth/') }));
+if (process.env.NODE_ENV !== 'test') app.use(logger('dev'));
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -23,7 +22,6 @@ app.get('/health', (req, res) => {
   const ready = mongoose.connection.readyState === 1;
   res.status(ready ? 200 : 503).json({ status: ready ? 'ok' : 'unavailable' });
 });
-app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/villains', villainsRouter);
 
